@@ -5,10 +5,15 @@
 Thêm các package cần thiết vào composer.json hoặc chạy lệnh `composer require` bao gồm:
 
    *infyomlabs/laravel-generator*
+   
    *laravelcollective/html* - html builder
+   
    *infyomlabs/adminlte-templates* hoặc *coreui-templates* - template
+   
    *infyomlabs/swagger-generator* (nếu cần)
+   
    *appointer/swaggervel* (nếu cần)
+   
    *doctrine/dbal* (nếu cần)
 
 Sau khi thêm các package xong, chạy lệnh `composer update` để tiến hành cập nhật các gói trên vào project
