@@ -49,7 +49,3 @@ Chạy lệnh `php artisan vendor:publish` để cập nhật quá trình chỉn
 Laravel Generator hỗ trợ tạo các file tương ứng với từng lệnh (tương tự lệnh `php artisan make` mặc định của laravel)
 
 ![Ảnh 1](https://images.viblo.asia/ae9cf0fd-0eef-4178-8ad5-39ff9b212abf.png)
-
-#### Template
-
-Laravel Generator hỗ trợ tạo layout và giao diện một cách đơn giản. Nó hỗ trợ một số template như AdminLTE, Bootstrap, CoreUI, Metronic, FlatLab
