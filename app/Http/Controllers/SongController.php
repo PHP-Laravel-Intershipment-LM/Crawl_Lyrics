@@ -21,7 +21,7 @@ class SongController extends Controller
         $querySearch = $request->input('q');
         $apiGenerator = new ZingAPI();
         $crawler = new Crawler();
-        $urlSearch = $apiGenerator->generateSearchURL($querySearch);
+        $urlSearch = $apiGenerator->generateURL(ZingAPI::URL_SEARCH, null, $querySearch);
         $result = $crawler->getSourceFromURL($urlSearch);
         return response()->json([
             'status'    => true,
@@ -41,7 +41,7 @@ class SongController extends Controller
         $id = $request->input('id');
         $apiGenerator = new ZingAPI();
         $crawler = new Crawler();
-        $urlSearch = $apiGenerator->generateGetInfoURL($id);
+        $urlSearch = $apiGenerator->generateURL(ZingAPI::URL_INFO, $id, null);
         $result = $crawler->getSourceFromURL($urlSearch);
         return response()->json([
             'status'    => true,
@@ -62,7 +62,7 @@ class SongController extends Controller
         $id = $request->input('id');
         $apiGenerator = new ZingAPI();
         $crawler = new Crawler();
-        $urlSearch = $apiGenerator->generateGetPlaylistURL($id);
+        $urlSearch = $apiGenerator->generateURL(ZingAPI::URL_PLAYLIST, $id, null);
         $result = $crawler->getSourceFromURL($urlSearch);
         return response()->json([
             'status'    => true,
@@ -82,7 +82,7 @@ class SongController extends Controller
         $id = $request->input('id');
         $apiGenerator = new ZingAPI();
         $crawler = new Crawler();
-        $urlSearch = $apiGenerator->generateDownloadURL($id);
+        $urlSearch = $apiGenerator->generateURL(ZingAPI::URL_DOWNLOAD, $id, null);
         $result = $crawler->getSourceFromURL($urlSearch);
         return response()->json([
             'status'    => true,

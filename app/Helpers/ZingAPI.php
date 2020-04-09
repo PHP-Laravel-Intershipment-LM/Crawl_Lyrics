@@ -9,66 +9,30 @@ class ZingAPI
     private $baseURL = 'https://zingmp3.vn/api';
     private $secrectKey = '10a01dcf33762d3a204cb96429918ff6';
     private $apiKey = '38e8643fb0dc04e8d65b99994d3dafff';
-    private $urls = [
-        'URL_INFO'      => '/song/get-song-info',
-        'URL_SEARCH'    => '/search/multi',
-        'URL_PLAYLIST'  => '/playlist/get-songs',
-        'URL_DOWNLOAD'  => '/download/get-streamings'
-    ];
+    public const URL_INFO = '/song/get-song-info';
+    public const URL_SEARCH = '/search/multi';
+    public const URL_PLAYLIST = '/playlist/get-songs';
+    public const URL_DOWNLOAD = '/download/get-streamings';
 
     /*
-    * Generate full url for task request
-    * @param $idSong - id of song
+    * Generate url for all task
+    * @return string - full url
     */
-    public function generateDownloadURL($id)
+    public function generateURL(string $url, string $id = null, string $query = null)
     {
-        $queryString = $this->generateQuery([
-            'ctime' => $this->getTimestamp(),
-            'id'    => $id
-        ]);
-        $signature = $this->generateSignature($this->urls['URL_DOWNLOAD'], str_replace('&', '', $queryString));
-        $result = $this->baseURL.$this->urls['URL_DOWNLOAD'].'?'.$queryString.'&api_key='.$this->apiKey.'&sig='.$signature;
-        return $result;
-    }
-
-    /*
-    * Generate full url for task request
-    * @param $idSong - id of playlist
-    */
-    public function generateGetPlaylistURL($idPlaylist)
-    {
-        $queryString = $this->generateQuery([
-            'ctime' => $this->getTimestamp(),
-            'id'    => $idPlaylist
-        ]);
-        $signature = $this->generateSignature($this->urls['URL_PLAYLIST'], str_replace('&', '', $queryString));
-        $result = $this->baseURL.$this->urls['URL_PLAYLIST'].'?'.$queryString.'&api_key='.$this->apiKey.'&sig='.$signature;
-        return $result;
-    }
-
-    /*
-    * Generate full url for task request
-    * @param $idSong - id of song
-    */
-    public function generateGetInfoURL($idSong)
-    {
-        $queryString = $this->generateQuery([
-            'ctime' => $this->getTimestamp(),
-            'id'    => $idSong
-        ]);
-        $signature = $this->generateSignature($this->urls['URL_INFO'], str_replace('&', '', $queryString));
-        $result = $this->baseURL.$this->urls['URL_INFO'].'?'.$queryString.'&api_key='.$this->apiKey.'&sig='.$signature;
-        return $result;
-    }
-
-    /*
-    * Generate full url for task request
-    * @param $querySearch - text to search
-    */
-    public function generateSearchURL($querySearch) {
-        $timestamp = $this->getTimestamp();
-        $signature = $this->generateSignature($this->urls['URL_SEARCH'], $this->generateQuery(['ctime' => $timestamp]));
-        $result = $this->baseURL.$this->urls['URL_SEARCH'].'?ctime='.$timestamp.'&q='.$querySearch.'&api_key='.$this->apiKey.'&sig='.$signature;
+        $params = [
+            'ctime' => $this->getTimestamp()
+        ];
+        if ($id != null) {
+            $params['id'] = $id;
+        }
+        $queryString = $this->generateQuery($params); //Create query string from list parameter
+        $signature = $this->generateSignature($url, str_replace('&', '', $queryString));
+        $result = $this->baseURL.$url.'?api_key='.$this->apiKey.'&sig='.$signature.'&'.$queryString;
+        // Append query if it not null
+        if ($query != null) {
+            $result = $result.'&q='.$query;
+        }
         return $result;
     }
 
