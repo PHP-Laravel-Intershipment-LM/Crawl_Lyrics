@@ -1,12 +1,10 @@
 <?php
 
-namespace Crawler;
+namespace App\Helpers;
 
 use GuzzleHttp\Client;
-use App\Helpers\Crawler\CrawlerZingMp3;
-use App\Helpers\Crawler\CrawlerCSN;
 
-abstract class Crawler
+class Crawler
 {
     private $client = null;
 
@@ -15,7 +13,7 @@ abstract class Crawler
         $this->client = new Client();
     }
 
-    protected function getSourceFromURL(string $urlSong, $params = [])
+    public function getSourceFromURL(string $urlSong, $params = [])
     {
         $request = $this->client->request('GET', $urlSong, $params);
         $response = $request->getBody();
