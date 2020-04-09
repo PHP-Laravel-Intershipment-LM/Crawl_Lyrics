@@ -10,7 +10,7 @@ Thêm các package cần thiết vào composer.json hoặc chạy lệnh `compos
    
    *infyomlabs/adminlte-templates* hoặc *coreui-templates* - template
    
-   *infyomlabs/swagger-generator* (nếu cần)
+   *infyomlabs/swagger-generator* (nếu cần) - sau khi cài đặt, đổi tên hai thư mục controller_docs và model_docs ở đường dẫn `vendor/infyomlabs/swagger-generator/templates` thành controller và model
    
    *appointer/swaggervel* (nếu cần)
    
