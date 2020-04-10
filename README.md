@@ -52,6 +52,8 @@ Route::prefix('api')
     ->group(base_path('routes/api.php'));
 ```
 
+Cuối cùng chạy lệnh `php artisan infyom:publish` để publish các file cần thiết vào project
+
 2. **Các chức năng chính**
 
 #### Code Generator
