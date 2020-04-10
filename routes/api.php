@@ -14,5 +14,5 @@ use Illuminate\Http\Request;
 */
 Route::get('song/find', 'SongController@findSong');
 Route::get('song/info', 'SongController@getInfo');
-Route::get('song/download', 'SongController@getStreaming');
-Route::get('playlist', 'SongController@getPlaylist');
+Route::get('song/download', 'SongAPIController@getStreaming');
+Route::get('playlist', 'PlaylistAPIController@getPlaylist');
