@@ -16,6 +16,17 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  *          format="int32"
  *      ),
  *      @SWG\Property(
+ *          property="id",
+ *          description="id",
+ *          type="integer",
+ *          format="int32"
+ *      ),
+ *      @SWG\Property(
+ *          property="links",
+ *          description="links",
+ *          type="string"
+ *      ),
+ *      @SWG\Property(
  *          property="lyric",
  *          description="lyric",
  *          type="string"
@@ -58,6 +69,7 @@ class Song extends Model
      * @var array
      */
     protected $casts = [
+        'links' => 'string',
         'lyric' => 'string'
     ];
 
