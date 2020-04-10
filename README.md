@@ -42,6 +42,16 @@ Chèn các alias để tiện cho quá trình gọi sử dụng các package
 
 Chạy lệnh `php artisan vendor:publish` để cập nhật quá trình chỉnh sửa project
 
+Mở file app\Providers\RouteServiceProvider.php và cập nhật `mapApiRoutes` như sau:
+
+``` php
+Route::prefix('api')
+    ->middleware('api')
+    ->as('api.')
+    ->namespace($this->namespace."\\API")
+    ->group(base_path('routes/api.php'));
+```
+
 2. **Các chức năng chính**
 
 #### Code Generator
