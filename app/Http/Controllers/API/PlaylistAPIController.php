@@ -11,6 +11,8 @@ use App\Http\Controllers\AppBaseController as InfyOmBaseController;
 use InfyOm\Generator\Criteria\LimitOffsetCriteria;
 use InfyOm\Generator\Utils\ResponseUtil;
 use Prettus\Repository\Criteria\RequestCriteria;
+use App\Helpers\ZingAPI;
+use App\Helpers\Crawler;
 use Response;
 
 /**
