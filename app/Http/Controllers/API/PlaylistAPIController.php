@@ -28,6 +28,26 @@ class PlaylistAPIController extends InfyOmBaseController
         $this->playlistRepository = $playlistRepo;
     }
 
+    public function getPlaylist(Request $request)
+    {
+        // Check if request is valid
+        if (!$request->filled('id')) {
+            return response()->json([
+                'status'    => 'false',
+                'message'   => 'Parameter is unvalid'
+            ], 500);
+        }
+        $id = $request->input('id');
+        $apiGenerator = new ZingAPI();
+        $crawler = new Crawler();
+        $urlSearch = $apiGenerator->generateURL(ZingAPI::URL_PLAYLIST, $id, null);
+        $result = $crawler->getSourceFromURL($urlSearch);
+        return response()->json([
+            'status'    => true,
+            'data'      => json_decode($result, 1)['data']
+        ], 200);
+    }
+
     /**
      * @param Request $request
      * @return Response
