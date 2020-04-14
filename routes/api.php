@@ -12,7 +12,7 @@ use Illuminate\Http\Request;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
-Route::get('song/find', 'SongController@findSong');
-Route::get('song/info', 'SongController@getInfo');
+Route::get('song/find', 'SongAPIController@findSong');
+Route::get('song/info', 'SongAPIController@getInfo');
 Route::get('song/download', 'SongAPIController@getStreaming');
 Route::get('playlist', 'PlaylistAPIController@getPlaylist');

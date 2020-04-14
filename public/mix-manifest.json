@@ -1,8 +1,7 @@
 {
-    "/bootstrap/js/bootstrap.min.js": "/bootstrap/js/bootstrap.min.js",
-    "/js/app.js": "/js/app.js",
-    "/css/app.css": "/css/app.css",
-    "/bootstrap/css/bootstrap.min.css": "/bootstrap/css/bootstrap.min.css",
-    "/css/styles.css": "/css/styles.css",
-    "/css/untitled.css": "/css/untitled.css"
+    "/static/bootstrap/js/bootstrap.min.js": "/static/bootstrap/js/bootstrap.min.js",
+    "/static/js/app.js": "/static/js/app.js",
+    "/static/css/app.css": "/static/css/app.css",
+    "/static/bootstrap/css/bootstrap.min.css": "/static/bootstrap/css/bootstrap.min.css",
+    "/static/css/styles.css": "/static/css/styles.css"
 }

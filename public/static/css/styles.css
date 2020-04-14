@@ -30,3 +30,15 @@ ul.navbar {
   margin-right: 1rem;
 }
 
+.thumbnail {
+  flex-basis: 15%;
+  text-align: center;
+}
+
+.content {
+  width: 80%;
+}
+
+.thumbnail img {
+  width: 60%;
+}
