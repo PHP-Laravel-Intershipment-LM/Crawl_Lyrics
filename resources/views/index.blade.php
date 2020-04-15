@@ -30,12 +30,10 @@
             <input type="url" class="url" name="url" autofocus="" autocomplete="off" required="">
             <button class="btn btn-dark btn-sm" type="button" v-on:click="submit">GET</button>
         </div>
-        <div class="result">
-            <!-- @include('layout.result.streaming') -->
-        </div>
+        <result-component ref="resultComponent"></result-component>
     </div>
     <!-- <script src="/assets/js/jquery.min.js"></script> -->
-    <script src="{{ asset('static/js/app.js') }}"></script>
+    <script src="{{ asset('static/js/app.js') }}" defer></script>
     <script src="{{ asset('static/bootstrap/js/bootstrap.min.js') }}"></script>
 </body>
 

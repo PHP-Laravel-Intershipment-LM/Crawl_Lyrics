@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\API;
+namespace App\Http\Controllers\API\ZingMp3;
 
 use App\Http\Requests\API\CreateSongAPIRequest;
 use App\Http\Requests\API\UpdateSongAPIRequest;
@@ -12,7 +12,7 @@ use InfyOm\Generator\Criteria\LimitOffsetCriteria;
 use InfyOm\Generator\Utils\ResponseUtil;
 use Prettus\Repository\Criteria\RequestCriteria;
 use App\Helpers\ZingAPI;
-use App\Helpers\Crawler;
+use App\Helpers\Crawler\ZingCrawler;
 use Response;
 
 /**
@@ -41,7 +41,7 @@ class SongAPIController extends InfyOmBaseController
         }
         $querySearch = $request->input('q');
         $apiGenerator = new ZingAPI();
-        $crawler = new Crawler();
+        $crawler = new ZingCrawler();
         $urlSearch = $apiGenerator->generateURL(ZingAPI::URL_SEARCH, null, $querySearch);
         $result = $crawler->getSourceFromURL($urlSearch);
         return response()->json([
@@ -61,7 +61,7 @@ class SongAPIController extends InfyOmBaseController
         }
         $id = $request->input('id');
         $apiGenerator = new ZingAPI();
-        $crawler = new Crawler();
+        $crawler = new ZingCrawler();
         $urlSearch = $apiGenerator->generateURL(ZingAPI::URL_INFO, $id, null);
         $result = $crawler->getSourceFromURL($urlSearch);
         return response()->json([
@@ -73,20 +73,36 @@ class SongAPIController extends InfyOmBaseController
     public function getStreaming(Request $request)
     {
         // Check if request is valid
-        if (!$request->filled('id')) {
+        if (!$request->filled('id') && !$request->filled('url')) {
             return response()->json([
                 'status'    => 'false',
                 'message'   => 'Parameter is unvalid'
             ], 500);
         }
-        $id = $request->input('id');
+
         $apiGenerator = new ZingAPI();
-        $crawler = new Crawler();
-        $urlSearch = $apiGenerator->generateURL(ZingAPI::URL_DOWNLOAD, $id, null);
-        $result = $crawler->getSourceFromURL($urlSearch);
+        $crawler = new ZingCrawler();
+        $id = ''; // Id of song
+        if ($request->input('url', false)) {
+            // Get id of song from url
+            $url = $request->input('url');
+            $id = $crawler->getIdSong($url);
+        } else {
+            $id = $request->input('id');
+        }
+        $urlStream = $apiGenerator->generateURL(ZingAPI::URL_DOWNLOAD, $id, null);
+        $urlInfo = $apiGenerator->generateURL(ZingAPI::URL_INFO, $id, null);
+        $streams = json_decode($crawler->getSourceFromURL($urlStream), 1);
+        $info = json_decode($crawler->getSourceFromURL($urlInfo), 1);
         return response()->json([
             'status'    => true,
-            'data'      => json_decode($result, 1)['data']
+            'data'      => [
+                'title'     => $info['data']['title'],
+                'artist'    => $info['data']['artists'][0]['name'],
+                'thumbnail' => $info['data']['thumbnail'],
+                'duration'  => $info['data']['duration'],
+                'links'     => $streams['data']
+            ]
         ], 200);
     }
 

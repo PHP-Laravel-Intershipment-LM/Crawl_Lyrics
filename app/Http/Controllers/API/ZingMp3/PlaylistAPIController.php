@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\API;
+namespace App\Http\Controllers\API\ZingMp3;
 
 use App\Http\Requests\API\CreatePlaylistAPIRequest;
 use App\Http\Requests\API\UpdatePlaylistAPIRequest;

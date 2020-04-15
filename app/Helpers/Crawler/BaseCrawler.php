@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Helpers;
+namespace App\Helpers\Crawler;
 
 use GuzzleHttp\Client;
 
-class Crawler
+abstract class BaseCrawler
 {
     private $client = null;
 

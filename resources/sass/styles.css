@@ -5,7 +5,8 @@
   padding-bottom: 1rem;
 }
 
-img {
+.hidden {
+  display: none !important;
 }
 
 ul.navbar {
