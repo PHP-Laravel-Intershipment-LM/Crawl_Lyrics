@@ -61,7 +61,6 @@
                     <button class="btn btn-dark btn-sm" type="button" v-on:click="downloadFile">Download</button>
                 </div>
             </div>
-            <a href="" class="hidden resultDownload" @click.prevent="preventDownload"></a>
         </div>
     </div>
     <!-- <script src="/assets/js/jquery.min.js"></script> -->

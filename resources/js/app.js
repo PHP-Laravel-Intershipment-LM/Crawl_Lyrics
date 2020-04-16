@@ -87,7 +87,6 @@ var app = new Vue({
 
         downloadFile: function () {
             let url = document.querySelector('.download option[selected]').value;
-            let tagDownload = document.querySelector('.resultDownload');
             FileSaver.saveAs(url, getFileName(url));
         }
     }

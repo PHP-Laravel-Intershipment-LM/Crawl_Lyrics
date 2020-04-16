@@ -49695,7 +49695,6 @@ var app = new Vue({
     },
     downloadFile: function downloadFile() {
       var url = document.querySelector('.download option[selected]').value;
-      var tagDownload = document.querySelector('.resultDownload');
       FileSaver.saveAs(url, getFileName(url));
     }
   }
