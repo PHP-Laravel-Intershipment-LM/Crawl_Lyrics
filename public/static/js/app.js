@@ -49667,7 +49667,7 @@ var app = new Vue({
             }
 
             if (response['data'].hasOwnProperty('duration')) {
-              _this.duration = response['data'].duration;
+              _this.duration = secondToTime(response['data'].duration);
             }
 
             if (response['data'].hasOwnProperty('links')) {
@@ -49734,6 +49734,34 @@ var getFileName = function getFileName(url) {
   }
 
   return matches[1];
+};
+
+var secondToTime = function secondToTime(second) {
+  time = '';
+
+  if (second > 3600) {
+    // Time format hh:mm:ss
+    var hh = standardizedTime(parseInt(second / 3600, 10));
+    var mm = standardizedTime(parseInt((second - hh * 3600) / 60, 10));
+    var ss = standardizedTime(parseInt(second - hh * 3600 - mm * 60, 10));
+    time = time + hh + ':' + mm + ':' + ss;
+  } else {
+    // Time format mm:ss
+    var mm = standardizedTime(parseInt(second / 60, 10));
+    var ss = standardizedTime(parseInt(second - mm * 60, 10));
+    time = time + mm + ':' + ss;
+  }
+
+  return time;
+};
+
+var standardizedTime = function standardizedTime(time) {
+  var reverseString = function reverseString(str) {
+    return ('' + str).split("").reverse().join("");
+  };
+
+  var r_time = (reverseString(time) + '00').substring(0, 2);
+  return reverseString(r_time);
 };
 
 /***/ }),

@@ -63,7 +63,7 @@ var app = new Vue({
                             this.thumbnail = response['data'].thumbnail;
                         }
                         if (response['data'].hasOwnProperty('duration')) {
-                            this.duration = response['data'].duration;
+                            this.duration = secondToTime(response['data'].duration);
                         }
                         if (response['data'].hasOwnProperty('links')) {
                             if (response['data']['links'].hasOwnProperty('128') && response['data']['links']['128'].length > 0) {
@@ -124,4 +124,29 @@ var getFileName = function(url) {
         return matches[2];
     }
     return matches[1];
+}
+
+var secondToTime = function(second) {
+    time = '';
+    if (second > 3600) {
+        // Time format hh:mm:ss
+        var hh = standardizedTime(parseInt(second/3600, 10));
+        var mm = standardizedTime(parseInt((second - hh*3600)/60, 10));
+        var ss = standardizedTime(parseInt(second - hh*3600 - mm*60, 10));
+        time = time + hh + ':' + mm + ':' + ss;
+    } else {
+        // Time format mm:ss
+        var mm = standardizedTime(parseInt(second/60, 10));
+        var ss = standardizedTime(parseInt(second - mm*60, 10));
+        time = time + mm + ':' + ss;
+    }
+    return time;
+}
+
+var standardizedTime = function(time) {
+    var reverseString = function(str) {
+        return ('' + str).split("").reverse().join("");
+    }
+    var r_time = (reverseString(time) + '00').substring(0, 2);
+    return reverseString(r_time);
 }
