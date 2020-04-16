@@ -35,14 +35,14 @@ var app = new Vue({
     el: '#app',
     data: {
         isHidden: true,
-        isStreaming: true,
         title: 'Tieu de',
         artist: 'Nghe si',
         thumbnail: 'thumbnail',
         duration: '02:30',
         link128Kbps: null,
         link320Kbps: null,
-        linkLossless: null
+        linkLossless: null,
+        isCrawling: false
     },
     methods: {
         submit: function () {
@@ -51,6 +51,7 @@ var app = new Vue({
             let url = document.querySelector('input[class="url"]').value;
 
             if (group === "Zing MP3") {
+                this.isCrawling = true;
                 handleZingMp3(opt, url, response => {
                     {
                         if (response['data'].hasOwnProperty('title')) {
@@ -79,7 +80,7 @@ var app = new Vue({
                         if (this.isHidden == true) {
                             this.isHidden = false;
                         }
-                        this.isStreaming = true;
+                        this.isCrawling = false;
                     }
                 });
             }
@@ -118,7 +119,7 @@ var handleZingMp3 = function (option, url, callback) {
 }
 
 var getFileName = function(url) {
-    let namePattern = /https:\/\/.+\/(.+\.m4a).+filename=(.*\..{0,3})/g;
+    let namePattern = /.+\/(.+\.m4a)?.+filename=(.*\..{0,3})?/g;
     let matches = namePattern.exec(url);
     if (matches.length > 2) {
         return matches[2];

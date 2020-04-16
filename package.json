@@ -25,7 +25,6 @@
     },
     "dependencies": {
         "file-saver": "^2.0.2",
-        "gulp": "^4.0.2",
-        "vue-loading-overlay": "^3.3.2"
+        "gulp": "^4.0.2"
     }
 }
