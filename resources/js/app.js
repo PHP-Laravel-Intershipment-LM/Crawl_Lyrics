@@ -7,6 +7,7 @@
 require('./bootstrap');
 
 window.Vue = require('vue');
+window.FileSaver = require('file-saver');
 
 /**
  * The following block of code may be used to automatically register your
@@ -19,18 +20,30 @@ window.Vue = require('vue');
 // const files = require.context('./', true, /\.vue$/i);
 // files.keys().map(key => Vue.component(key.split('/').pop().split('.')[0], files(key).default));
 
-Vue.component('result-component', require('./components/ZingResultComponent.vue').default);
+// Vue.component('result-component', require('./components/ZingResultComponent.vue').default);
 
 /**
  * Next, we will create a fresh Vue application instance and attach it to
  * the page. Then, you may begin adding components to this application
  * or customize the JavaScript scaffolding to fit your unique needs.
  */
+
 const GET_STREAMING = 0;
 const GET_LYRIC = 1;
 
 var app = new Vue({
     el: '#app',
+    data: {
+        isHidden: true,
+        isStreaming: true,
+        title: 'Tieu de',
+        artist: 'Nghe si',
+        thumbnail: 'thumbnail',
+        duration: '02:30',
+        link128Kbps: null,
+        link320Kbps: null,
+        linkLossless: null
+    },
     methods: {
         submit: function () {
             let group = document.querySelector('option[selected]').parentElement.label;
@@ -38,13 +51,49 @@ var app = new Vue({
             let url = document.querySelector('input[class="url"]').value;
 
             if (group === "Zing MP3") {
-                handleZingMp3(opt, url, this.$refs.resultComponent);
+                handleZingMp3(opt, url, response => {
+                    {
+                        if (response['data'].hasOwnProperty('title')) {
+                            this.title = response['data'].title;
+                        }
+                        if (response['data'].hasOwnProperty('artist')) {
+                            this.artist = response['data'].artist;
+                        }
+                        if (response['data'].hasOwnProperty('thumbnail')) {
+                            this.thumbnail = response['data'].thumbnail;
+                        }
+                        if (response['data'].hasOwnProperty('duration')) {
+                            this.duration = response['data'].duration;
+                        }
+                        if (response['data'].hasOwnProperty('links')) {
+                            if (response['data']['links'].hasOwnProperty('128') && response['data']['links']['128'].length > 0) {
+                                this.link128Kbps = response['data']['links']['128'];
+                            }
+                            if (response['data']['links'].hasOwnProperty('320') && response['data']['links']['320'].length > 0) {
+                                this.link320Kbps = response['data']['links']['320'];
+                            }
+                            if (response['data']['links'].hasOwnProperty('lossless') && response['data']['links']['lossless'].length > 0) {
+                                this.linkLossless = response['data']['links']['lossless'];
+                            }
+                        }
+                        if (this.isHidden == true) {
+                            this.isHidden = false;
+                        }
+                        this.isStreaming = true;
+                    }
+                });
             }
+        },
+
+        downloadFile: function () {
+            let url = document.querySelector('.download option[selected]').value;
+            let tagDownload = document.querySelector('.resultDownload');
+            FileSaver.saveAs(url, getFileName(url));
         }
     }
 });
 
-var handleZingMp3 = function (option, url, resultComponent) {
+var handleZingMp3 = function (option, url, callback) {
 
     let getStreaming = function (url) {
         axios({
@@ -55,30 +104,11 @@ var handleZingMp3 = function (option, url, resultComponent) {
                 url: url
             }
         }).then(response => {
-            handleResult(response['data'], resultComponent);
+            callback(response['data']);
         });
     }
 
     let getLyric = function (url) { }
-
-    let handleResult = function (response, resultComponent) {
-        if (response['data'].hasOwnProperty('title')) {
-            resultComponent.title = response['data'].title;
-        }
-        if (response['data'].hasOwnProperty('artist')) {
-            resultComponent.artist = response['data'].artist;
-        }
-        if (response['data'].hasOwnProperty('thumbnail')) {
-            resultComponent.thumbnail = response['data'].thumbnail;
-        }
-        if (response['data'].hasOwnProperty('duration')) {
-            resultComponent.duration = response['data'].duration;
-        }
-        if (resultComponent.isHidden == true) {
-            resultComponent.isHidden = false;
-        }
-        resultComponent.isStreaming = true;
-    }
 
     switch (parseInt(option, 10)) {
         case GET_STREAMING:
@@ -86,4 +116,13 @@ var handleZingMp3 = function (option, url, resultComponent) {
         case GET_LYRIC:
             return getLyric(url);
     }
+}
+
+var getFileName = function(url) {
+    let namePattern = /https:\/\/.+\/(.+\.m4a).+filename=(.*\..{0,3})/g;
+    let matches = namePattern.exec(url);
+    if (matches.length > 2) {
+        return matches[2];
+    }
+    return matches[1];
 }
