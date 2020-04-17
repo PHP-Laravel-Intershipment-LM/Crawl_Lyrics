@@ -29,6 +29,11 @@
             </select>
             <button class="btn btn-dark btn-sm" type="button" v-on:click="submit" :disabled="isCrawling">GET</button>
         </div>
+        <div class="d-flex justify-content-center align-items-center" style="height: 100px" v-bind:class="[isCrawling ? '' : 'hidden']">
+            <div class="spinner-border" role="status">
+                <span class="sr-only">Loading...</span>
+            </div>
+        </div>
         <div class="d-flex align-items-center result" v-bind:class="{hidden: isHidden}">
             <div class="border-success thumbnail" style="margin-right: 10px;margin-left: 10px;padding-right: 5px;padding-left: 5px;">
                 <img loading="lazy" v-bind:src="thumbnail" />
