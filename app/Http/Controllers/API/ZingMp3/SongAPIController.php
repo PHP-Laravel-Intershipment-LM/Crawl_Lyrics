@@ -7,6 +7,7 @@ use App\Http\Requests\API\UpdateSongAPIRequest;
 use App\Models\Song;
 use App\Repositories\SongRepository;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use App\Http\Controllers\AppBaseController as InfyOmBaseController;
 use InfyOm\Generator\Criteria\LimitOffsetCriteria;
 use InfyOm\Generator\Utils\ResponseUtil;
@@ -30,7 +31,7 @@ class SongAPIController extends InfyOmBaseController
         $this->songRepository = $songRepo;
     }
 
-    public function findSong(Request $request)
+    private function findSong(Request $request)
     {
         // Check if request is valid
         if (!$request->filled('q')) {
@@ -44,33 +45,10 @@ class SongAPIController extends InfyOmBaseController
         $crawler = new ZingCrawler();
         $urlSearch = $apiGenerator->generateURL(ZingAPI::URL_SEARCH, null, $querySearch);
         $result = $crawler->getSourceFromURL($urlSearch);
-        return response()->json([
-            'status'    => true,
-            'data'      => json_decode($result, 1)['data']
-        ], 200);
+        return json_decode($result, 1)['data'];
     }
 
-    public function getInfo(Request $request)
-    {
-        // Check if request is valid
-        if (!$request->filled('id')) {
-            return response()->json([
-                'status'    => 'false',
-                'message'   => 'Parameter is unvalid'
-            ], 500);
-        }
-        $id = $request->input('id');
-        $apiGenerator = new ZingAPI();
-        $crawler = new ZingCrawler();
-        $urlSearch = $apiGenerator->generateURL(ZingAPI::URL_INFO, $id, null);
-        $result = $crawler->getSourceFromURL($urlSearch);
-        return response()->json([
-            'status'    => true,
-            'data'      => json_decode($result, 1)['data']
-        ], 200);
-    }
-
-    public function getStreaming(Request $request)
+    public function crawlSong(Request $request, $task)
     {
         // Check if request is valid
         if (!$request->filled('id') && !$request->filled('url')) {
@@ -82,6 +60,7 @@ class SongAPIController extends InfyOmBaseController
 
         $apiGenerator = new ZingAPI();
         $crawler = new ZingCrawler();
+        $info = []; // Result data
         $id = ''; // Id of song
         if ($request->input('url', false)) {
             // Get id of song from url
@@ -90,10 +69,15 @@ class SongAPIController extends InfyOmBaseController
         } else {
             $id = $request->input('id');
         }
-        $urlStream = $apiGenerator->generateURL(ZingAPI::URL_DOWNLOAD, $id, null);
-        $urlInfo = $apiGenerator->generateURL(ZingAPI::URL_INFO, $id, null);
-        $streams = json_decode($crawler->getSourceFromURL($urlStream), 1);
-        $info = json_decode($crawler->getSourceFromURL($urlInfo), 1);
+        // Check id if it exits
+        if (Cache::has($id)) {
+            $info = Cache::get($id, []);
+        } else {
+            $urlInfo = $apiGenerator->generateURL(ZingAPI::URL_INFO, $id, null);
+            $info = json_decode($crawler->getSourceFromURL($urlInfo), 1);
+            // Save it to cache
+            Cache::add($id, $info);
+        }
         return response()->json([
             'status'    => true,
             'data'      => [
@@ -101,11 +85,11 @@ class SongAPIController extends InfyOmBaseController
                 'artist'    => $info['data']['artists'][0]['name'],
                 'thumbnail' => $info['data']['thumbnail'],
                 'duration'  => $info['data']['duration'],
-                'links'     => $streams['data']
+                'links'     => $task == 'streaming' ? $info['data']['streaming']['default'] : '',
+                'lyric'     => $task == 'lyric' && sizeof($info['data']['lyrics']) > 0 ? $info['data']['lyrics'][0]['content'] : ''
             ]
         ], 200);
     }
-
 
     /**
      * @param Request $request

@@ -49634,26 +49634,30 @@ var app = new Vue({
   el: '#app',
   data: {
     isHidden: true,
+    crawlState: 'none',
+    option: '0',
     title: 'Tieu de',
     artist: 'Nghe si',
     thumbnail: 'thumbnail',
     duration: '02:30',
+    lyric: '',
     link128Kbps: null,
     link320Kbps: null,
-    linkLossless: null,
-    isCrawling: false
+    linkLossless: null
   },
   methods: {
     submit: function submit() {
       var _this = this;
 
       var group = document.querySelector('option[selected]').parentElement.label;
-      var opt = document.querySelector('option[selected]').value;
       var url = document.querySelector('input[class="url"]').value;
 
       if (group === "Zing MP3") {
         this.isCrawling = true;
-        handleZingMp3(opt, url, function (response) {
+        this.crawlStae = 'process';
+        this.lyric = ''; // Reset lyric before start crawling
+
+        handleZingMp3(this.option, url, function (response) {
           {
             if (response['data'].hasOwnProperty('title')) {
               _this.title = response['data'].title;
@@ -49669,6 +49673,10 @@ var app = new Vue({
 
             if (response['data'].hasOwnProperty('duration')) {
               _this.duration = secondToTime(response['data'].duration);
+            }
+
+            if (response['data'].hasOwnProperty('lyric')) {
+              _this.lyric = response['data'].lyric.split("\n").join("").split("<br><br>").join("<br>");
             }
 
             if (response['data'].hasOwnProperty('links')) {
@@ -49690,6 +49698,7 @@ var app = new Vue({
             }
 
             _this.isCrawling = false;
+            _this.crawlState = 'pause';
           }
         });
       }
@@ -49697,6 +49706,17 @@ var app = new Vue({
     downloadFile: function downloadFile() {
       var url = document.querySelector('.download option[selected]').value;
       FileSaver.saveAs(url, getFileName(url));
+    },
+    copyText: function copyText() {
+      var el = document.createElement('textarea');
+      el.value = document.querySelector('.lyric').innerText;
+      el.setAttribute('readonly', '');
+      el.style.position = 'absolute';
+      el.style.left = '-9999px';
+      document.body.appendChild(el);
+      el.select();
+      document.execCommand('copy');
+      document.body.removeChild(el);
     }
   }
 });
@@ -49704,7 +49724,7 @@ var app = new Vue({
 var handleZingMp3 = function handleZingMp3(option, url, callback) {
   var getStreaming = function getStreaming(url) {
     axios({
-      url: 'api/song/download',
+      url: 'api/song/streaming',
       method: 'get',
       baseURL: window.location.href,
       params: {
@@ -49715,7 +49735,18 @@ var handleZingMp3 = function handleZingMp3(option, url, callback) {
     });
   };
 
-  var getLyric = function getLyric(url) {};
+  var getLyric = function getLyric(url) {
+    axios({
+      url: 'api/song/lyric',
+      method: 'get',
+      baseURL: window.location.href,
+      params: {
+        url: url
+      }
+    }).then(function (response) {
+      callback(response['data']);
+    });
+  };
 
   switch (parseInt(option, 10)) {
     case GET_STREAMING:
