@@ -30,7 +30,7 @@ class SongAPIController extends InfyOmBaseController
     {
         $this->songRepository = $songRepo;
     }
-    
+
     /**
      * @param Request $request
      * @return Response
@@ -105,15 +105,10 @@ class SongAPIController extends InfyOmBaseController
         } else {
             $id = $request->input('id');
         }
-        // Check id if it exits
-        if (Cache::has($id)) {
-            $info = Cache::get($id, []);
-        } else {
-            $urlInfo = $apiGenerator->generateURL(ZingAPI::URL_INFO, $id, null);
-            $info = json_decode($crawler->getSourceFromURL($urlInfo), 1);
-            // Save it to cache
-            Cache::add($id, $info);
-        }
+
+        $urlInfo = $apiGenerator->generateURL(ZingAPI::URL_INFO, $id, null);
+        $info = json_decode($crawler->getSourceFromURL($urlInfo), 1);
+
         return response()->json([
             'status'    => true,
             'message'   => 'Crawl song success!',

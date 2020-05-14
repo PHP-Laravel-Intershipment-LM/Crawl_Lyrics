@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * @SWG\Definition(
- *      definition="Playlist",
+ *      definition="Artist",
  *      required={""},
  *      @SWG\Property(
  *          property="id",
@@ -16,10 +16,19 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  *          format="int32"
  *      ),
  *      @SWG\Property(
- *          property="id",
- *          description="id",
- *          type="integer",
- *          format="int32"
+ *          property="wid",
+ *          description="wid",
+ *          type="string"
+ *      ),
+ *      @SWG\Property(
+ *          property="name",
+ *          description="name",
+ *          type="string"
+ *      ),
+ *      @SWG\Property(
+ *          property="link",
+ *          description="link",
+ *          type="string"
  *      ),
  *      @SWG\Property(
  *          property="created_at",
@@ -35,20 +44,23 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  *      )
  * )
  */
-class Playlist extends Model
+class Artist extends Model
 {
     use SoftDeletes;
 
-    public $table = 'playlists';
+    public $table = 'artists';
     
 
     protected $dates = ['deleted_at'];
 
+    
+    public $timestamps = false;
+
 
     public $fillable = [
-        'id',
         'wid',
-        'sid'
+        'name',
+        'link'
     ];
 
     /**
@@ -57,7 +69,9 @@ class Playlist extends Model
      * @var array
      */
     protected $casts = [
-        
+        'wid' => 'string',
+        'name' => 'string',
+        'link' => 'string'
     ];
 
     /**

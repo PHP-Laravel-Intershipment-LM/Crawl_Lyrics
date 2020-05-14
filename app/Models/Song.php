@@ -16,8 +16,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  *          format="int32"
  *      ),
  *      @SWG\Property(
- *          property="id",
- *          description="id",
+ *          property="sid",
+ *          description="sid",
  *          type="integer",
  *          format="int32"
  *      ),
