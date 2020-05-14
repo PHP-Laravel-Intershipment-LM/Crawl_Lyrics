@@ -30,31 +30,67 @@ class SongAPIController extends InfyOmBaseController
     {
         $this->songRepository = $songRepo;
     }
-
-    private function findSong(Request $request)
-    {
-        // Check if request is valid
-        if (!$request->filled('q')) {
-            return response()->json([
-                'status'    => 'false',
-                'message'   => 'Parameter is unvalid'
-            ], 500);
-        }
-        $querySearch = $request->input('q');
-        $apiGenerator = new ZingAPI();
-        $crawler = new ZingCrawler();
-        $urlSearch = $apiGenerator->generateURL(ZingAPI::URL_SEARCH, null, $querySearch);
-        $result = $crawler->getSourceFromURL($urlSearch);
-        return json_decode($result, 1)['data'];
-    }
-
+    
+    /**
+     * @param Request $request
+     * @return Response
+     *
+     * @SWG\Get(
+     *      path="/song/crawl",
+     *      summary="Crawl online song",
+     *      tags={"Song Online"},
+     *      description="Crawl all information of online song",
+     *      produces={"application/json"},
+     *      @SWG\Parameter(
+     *          name="url",
+     *          description="url of online Song",
+     *          type="string",
+     *          required=false,
+     *          in="path"
+     *      ),
+     *      @SWG\Parameter(
+     *          name="id",
+     *          description="id of online Song",
+     *          type="string",
+     *          required=false,
+     *          in="path"
+     *      ),
+     *      @SWG\Response(
+     *          response=200,
+     *          description="successful operation",
+     *          @SWG\Schema(
+     *              type="object",
+     *              @SWG\Property(
+     *                  property="status",
+     *                  type="boolean"
+     *              ),
+     *              @SWG\Property(
+     *                  property="message",
+     *                  type="string"
+     *              ),
+     *              @SWG\Property(
+     *                  property="data",
+     *                  type="object",
+     *                  @SWG\Schema(
+     *                      type="object",
+     *                      @SWG\Property(
+     *                          property="message",
+     *                          type="string"
+     *                      )
+     *                  )
+     *              )
+     *          )
+     *      )
+     * )
+     */
     public function crawlSong(Request $request, $task)
     {
         // Check if request is valid
         if (!$request->filled('id') && !$request->filled('url')) {
             return response()->json([
                 'status'    => 'false',
-                'message'   => 'Parameter is unvalid'
+                'message'   => 'Parameter is unvalid',
+                'data'      => []
             ], 500);
         }
 
@@ -80,6 +116,7 @@ class SongAPIController extends InfyOmBaseController
         }
         return response()->json([
             'status'    => true,
+            'message'   => 'Crawl song success!',
             'data'      => [
                 'title'     => $info['data']['title'],
                 'artist'    => $info['data']['artists'][0]['name'],
@@ -97,9 +134,9 @@ class SongAPIController extends InfyOmBaseController
      *
      * @SWG\Get(
      *      path="/songs",
-     *      summary="Get a listing of the Songs.",
-     *      tags={"Song"},
-     *      description="Get all Songs",
+     *      summary="Get all song",
+     *      tags={"Song Local Storage"},
+     *      description="Get a listing of the song",
      *      produces={"application/json"},
      *      @SWG\Response(
      *          response=200,
@@ -127,9 +164,9 @@ class SongAPIController extends InfyOmBaseController
     {
         $this->songRepository->pushCriteria(new RequestCriteria($request));
         $this->songRepository->pushCriteria(new LimitOffsetCriteria($request));
-        $songs = $this->songRepository->all();
+        $song = $this->songRepository->all();
 
-        return $this->sendResponse($songs->toArray(), 'Songs retrieved successfully');
+        return $this->sendResponse($song->toArray(), 'song retrieved successfully');
     }
 
     /**
@@ -137,16 +174,16 @@ class SongAPIController extends InfyOmBaseController
      * @return Response
      *
      * @SWG\Post(
-     *      path="/songs",
-     *      summary="Store a newly created Song in storage",
-     *      tags={"Song"},
-     *      description="Store Song",
+     *      path="/song",
+     *      summary="Store Song",
+     *      tags={"Song Local Storage"},
+     *      description="Store a newly created Song in storage",
      *      produces={"application/json"},
      *      @SWG\Parameter(
      *          name="body",
      *          in="body",
      *          description="Song that should be stored",
-     *          required=false,
+     *          required=true,
      *          @SWG\Schema(ref="#/definitions/Song")
      *      ),
      *      @SWG\Response(
@@ -159,12 +196,12 @@ class SongAPIController extends InfyOmBaseController
      *                  type="boolean"
      *              ),
      *              @SWG\Property(
-     *                  property="data",
-     *                  ref="#/definitions/Song"
-     *              ),
-     *              @SWG\Property(
      *                  property="message",
      *                  type="string"
+     *              ),
+     *              @SWG\Property(
+     *                  property="data",
+     *                  ref="#/definitions/Song"
      *              )
      *          )
      *      )
@@ -174,9 +211,9 @@ class SongAPIController extends InfyOmBaseController
     {
         $input = $request->all();
 
-        $songs = $this->songRepository->create($input);
+        $song = $this->songRepository->create($input);
 
-        return $this->sendResponse($songs->toArray(), 'Song saved successfully');
+        return $this->sendResponse($song->toArray(), 'Song saved successfully');
     }
 
     /**
@@ -184,16 +221,16 @@ class SongAPIController extends InfyOmBaseController
      * @return Response
      *
      * @SWG\Get(
-     *      path="/songs/{id}",
-     *      summary="Display the specified Song",
-     *      tags={"Song"},
-     *      description="Get Song",
+     *      path="/song/{id}",
+     *      summary="Get Song",
+     *      tags={"Song Local Storage"},
+     *      description="Display the specified Song",
      *      produces={"application/json"},
      *      @SWG\Parameter(
      *          name="id",
      *          description="id of Song",
      *          type="integer",
-     *          required=true,
+     *          required=false,
      *          in="path"
      *      ),
      *      @SWG\Response(
@@ -235,10 +272,10 @@ class SongAPIController extends InfyOmBaseController
      * @return Response
      *
      * @SWG\Put(
-     *      path="/songs/{id}",
-     *      summary="Update the specified Song in storage",
-     *      tags={"Song"},
-     *      description="Update Song",
+     *      path="/song/{id}",
+     *      summary="Update Song",
+     *      tags={"Song Local Storage"},
+     *      description="Update the specified Song in storage",
      *      produces={"application/json"},
      *      @SWG\Parameter(
      *          name="id",
@@ -296,10 +333,10 @@ class SongAPIController extends InfyOmBaseController
      * @return Response
      *
      * @SWG\Delete(
-     *      path="/songs/{id}",
-     *      summary="Remove the specified Song from storage",
-     *      tags={"Song"},
-     *      description="Delete Song",
+     *      path="/song/{id}",
+     *      summary="Delete Song",
+     *      tags={"Song Local Storage"},
+     *      description="Remove the specified Song from storage",
      *      produces={"application/json"},
      *      @SWG\Parameter(
      *          name="id",

@@ -12,5 +12,8 @@ use Illuminate\Http\Request;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
-Route::get('song/{task}', 'ZingMp3\SongAPIController@crawlSong');
-Route::get('playlist', 'ZingMp3\PlaylistAPIController@getPlaylist');
+
+Route::prefix('v1')->group(function () {
+    Route::get('song/{task}', 'ZingMp3\SongAPIController@crawlSong');
+    Route::get('playlist', 'ZingMp3\PlaylistAPIController@getPlaylist');
+});
