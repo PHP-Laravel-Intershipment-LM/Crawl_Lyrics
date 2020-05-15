@@ -15,5 +15,5 @@ use Illuminate\Http\Request;
 
 Route::prefix('v1')->group(function () {
     Route::get('song/{task}', 'ZingMp3\SongAPIController@crawlSong');
-    Route::get('playlist', 'ZingMp3\PlaylistAPIController@getPlaylist');
+    Route::get('artists/list', 'ZingMp3\SongAPIController@crawlArtists');
 });

@@ -13,12 +13,13 @@ class ZingAPI
     public const URL_SEARCH = '/search/multi';
     public const URL_PLAYLIST = '/playlist/get-songs';
     public const URL_DOWNLOAD = '/download/get-streamings';
+    public const URL_LIST_ARTISTS = '/artist/get-list';
+    public const URL_LIST_ARTIST_SONGS = '/song/get-list';
 
     /*
     * Generate url for all task
-    * @return string - full url
     */
-    public function generateURL(string $url, string $id = null, string $query = null)
+    public function generateURL(string $url, string $id = null, string $query = null, array $other = [])
     {
         $params = [
             'ctime' => $this->getTimestamp()
@@ -32,6 +33,10 @@ class ZingAPI
         // Append query if it not null
         if ($query != null) {
             $result = $result.'&q='.$query;
+        }
+        // Append other input if not null
+        if (0 < sizeof($other)) {
+            $result = $result.'&'.$this->generateQuery($other);
         }
         return $result;
     }
