@@ -48,14 +48,32 @@ class SongAPIController extends InfyOmBaseController
         $start = $request->input('start', 0);
         $count = $request->input('count', 199);
         $info = $crawler->crawlArtists($wid, intval($start), intval($count));
-        $detail = [];
+        $songs = [];
         foreach ($info as $artist) {
             $artistDetail = $crawler->crawlArtistSongs($artist['id']);
-            $detail = array_merge($detail, $artistDetail);
+            $songs = array_merge($songs, $artistDetail);
         }
 
+        // Save data to database
+        foreach ($songs as $song) {
+            $record = $this->songRepository->create([
+                'wid'       => $song['id'],
+                'title'     => $song['title'],
+                'artist'    => $song['artists_names'],
+                'duration'  => $song['duration'],
+                'listen'    => $song['listen'],
+                'lyric'     => $song['lyric']
+            ]);
+            $record->save();
+        }
         
-        return response()->json($detail, 200);
+        return response()->json([
+            'status'    => 'true',
+            'message'   => 'Save success',
+            'data'      => [
+                'size'      => sizeof($songs)
+            ]
+        ], 200);
     }
     
     /**

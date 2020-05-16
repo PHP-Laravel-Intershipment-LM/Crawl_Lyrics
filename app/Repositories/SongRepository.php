@@ -12,8 +12,10 @@ class SongRepository extends BaseRepository
      */
     protected $fieldSearchable = [
         'wid',
-        'name',
-        'links',
+        'title',
+        'artist',
+        'duration',
+        'listen',
         'lyric'
     ];
 

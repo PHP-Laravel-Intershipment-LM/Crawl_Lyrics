@@ -22,26 +22,9 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  *          format="int32"
  *      ),
  *      @SWG\Property(
- *          property="links",
- *          description="links",
- *          type="string"
- *      ),
- *      @SWG\Property(
  *          property="lyric",
  *          description="lyric",
  *          type="string"
- *      ),
- *      @SWG\Property(
- *          property="created_at",
- *          description="created_at",
- *          type="string",
- *          format="date-time"
- *      ),
- *      @SWG\Property(
- *          property="updated_at",
- *          description="updated_at",
- *          type="string",
- *          format="date-time"
  *      )
  * )
  */
@@ -55,11 +38,16 @@ class Song extends Model
     protected $dates = ['deleted_at'];
 
 
+    public $timestamps = false;
+
+
     public $fillable = [
         'id',
         'wid',
-        'name',
-        'links',
+        'title',
+        'artist',
+        'duration',
+        'listen',
         'lyric'
     ];
 
@@ -69,7 +57,6 @@ class Song extends Model
      * @var array
      */
     protected $casts = [
-        'links' => 'string',
         'lyric' => 'string'
     ];
 
